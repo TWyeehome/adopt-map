@@ -30,7 +30,7 @@ for (var i = 0; i < house.length; i++) {
         '<div class="border-bottom">網站 : ' + '<a href="' + house[i].link + '">連結</a>' + '</div>' +
         '<div class="border-bottom">留容最大值 : ' + house[i].MaxAmls + '</div>' +
         '<div class="border-bottom">在養數 : ' + house[i].cnt + '</div>' +
-        '<div class="border-bottom my-1">備註 : ' + house[i].Memo + '</div>';
+        '<div class="border-bottom">備註 : ' + house[i].Memo + '</div>';
 
     // marker 顏色判定
     if (house[i].cnt > house[i].MaxAmls) {
