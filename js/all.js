@@ -28,16 +28,31 @@ for (var i = 0; i < house.length; i++) {
         '<div class="border-bottom">地址 : ' + house[i].Address + '</div>' +
         '<div class="border-bottom">電話 : ' + house[i].Tel + '</div>' +
         '<div class="border-bottom">網站 : ' + '<a href="' + house[i].link + '">連結</a>' + '</div>' +
+        '<div class="border-bottom">留容最大值 : ' + house[i].MaxAmls + '</div>' +
+        '<div class="border-bottom">在養數 : ' + house[i].cnt + '</div>' +
         '<div class="border-bottom my-1">備註 : ' + house[i].Memo + '</div>';
 
-    circleMarkerOptions = {
-        weight: 2,
-        fillColor: "orange",
-        color: "black",
-        opacity: 1,
-        fillOpacity: .4
-    };
-    markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
+    // marker 顏色判定
+    if (house[i].cnt > house[i].MaxAmls) {
+        circleMarkerOptions = {
+            weight: 2,
+            fillColor: "red",
+            color: "black",
+            opacity: 1,
+            fillOpacity: .8
+        };
+        markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
+
+    } else {
+        circleMarkerOptions = {
+            weight: 2,
+            fillColor: "green",
+            color: "black",
+            opacity: 1,
+            fillOpacity: .8
+        };
+        markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
+    }
 };
 
 // 取得座標
