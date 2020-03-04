@@ -20,12 +20,36 @@ let infoStr = '';
 let redNum = 0;
 let greenNum = 0;
 
+// 右上標籤
+L.Control.Watermark = L.Control.extend({
+    onAdd: function(map) {
+        let layer = L.DomUtil.create('div');
+        layer.innerHTML =
+            '<section id="loading" class="bg-white rounded p-2" style="opacity:0.95;">' +
+            '<h2>Loading......</h2>' +
+            '</section>';
+        return layer;
+    },
+    onRemove: function(map) {
+        // Nothing to do here
+    }
+});
+L.control.watermark = function(opts) {
+    return new L.Control.Watermark(opts);
+};
+L.control.watermark({
+    position: 'topright',
+}).addTo(map);
+
 let home = new XMLHttpRequest();
 home.open('GET', 'https://script.google.com/macros/s/AKfycbzSD0z0YC-ExNrS4s3OxJR8knvLm5cHxQzAE0Y1MtWKenWWI_to/exec?url=https://asms.coa.gov.tw/Amlapp/App/Handler_ENRF/MapApiCity1.ashx', true);
 home.send(null);
 home.onload = () => {
     let homeData = JSON.parse(home.responseText);
-    console.log(homeData)
+    console.log(homeData);
+
+    document.getElementById('loading').style.display = 'none'
+
     // 渲染
     let markers = [];
     for (var i = 0; i < homeData.length; i++) {
@@ -71,7 +95,7 @@ home.onload = () => {
         ];
     };
 
-    // 圖例
+    // 左下
     L.Control.Watermark = L.Control.extend({
         onAdd: function(map) {
             let layer = L.DomUtil.create('div');
@@ -91,6 +115,8 @@ home.onload = () => {
         return new L.Control.Watermark(opts);
     };
     L.control.watermark({
-        position: 'bottomleft'
+        position: 'bottomleft',
     }).addTo(map);
+
+
 };
