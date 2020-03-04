@@ -14,50 +14,83 @@ let myRenderer = L.canvas({
     padding: 0
 });
 
-console.log(house)
 
 let circleMarkerOptions = null;
 let infoStr = '';
+let redNum = 0;
+let greenNum = 0;
 
-// 渲染
-let markers = [];
-for (var i = 0; i < house.length; i++) {
-    // 內文
-    infoStr =
-        '<div class="border-bottom font-weight-bolder">' + house[i].ShelterName + '</div>' +
-        '<div class="border-bottom">地址 : ' + house[i].Address + '</div>' +
-        '<div class="border-bottom">電話 : ' + house[i].Tel + '</div>' +
-        '<div class="border-bottom">網站 : ' + '<a href="' + house[i].link + '">連結</a>' + '</div>' +
-        '<div class="border-bottom">留容最大值 : ' + house[i].MaxAmls + '</div>' +
-        '<div class="border-bottom">在養數 : ' + house[i].cnt + '</div>' +
-        '<div class="border-bottom">備註 : ' + house[i].Memo + '</div>';
+let home = new XMLHttpRequest();
+home.open('GET', 'https://script.google.com/macros/s/AKfycbzSD0z0YC-ExNrS4s3OxJR8knvLm5cHxQzAE0Y1MtWKenWWI_to/exec?url=https://asms.coa.gov.tw/Amlapp/App/Handler_ENRF/MapApiCity1.ashx', true);
+home.send(null);
+home.onload = () => {
+    let homeData = JSON.parse(home.responseText);
+    console.log(homeData)
+    // 渲染
+    let markers = [];
+    for (var i = 0; i < homeData.length; i++) {
+        // 內文
+        infoStr =
+            '<div class="border-bottom font-weight-bolder">' + homeData[i].ShelterName + '</div>' +
+            '<div class="border-bottom">地址 : ' + homeData[i].Address + '</div>' +
+            '<div class="border-bottom">電話 : ' + homeData[i].Tel + '</div>' +
+            '<div class="border-bottom">網站 : ' + '<a href="' + homeData[i].link + '">連結</a>' + '</div>' +
+            '<div class="border-bottom">留容最大值 : ' + homeData[i].MaxAmls + '</div>' +
+            '<div class="border-bottom">在養數 : ' + homeData[i].cnt + '</div>' +
+            '<div class="border-bottom">備註 : ' + homeData[i].Memo + '</div>';
 
-    // marker 顏色判定
-    if (house[i].cnt > house[i].MaxAmls) {
-        circleMarkerOptions = {
-            weight: 2,
-            fillColor: "red",
-            color: "black",
-            opacity: 1,
-            fillOpacity: .8
-        };
-        markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
+        // marker 顏色判定
+        if (homeData[i].cnt > homeData[i].MaxAmls) {
+            redNum += 1;
+            circleMarkerOptions = {
+                weight: 2,
+                fillColor: "red",
+                color: "black",
+                opacity: 1,
+                fillOpacity: .8
+            };
+            markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
 
-    } else {
-        circleMarkerOptions = {
-            weight: 2,
-            fillColor: "green",
-            color: "black",
-            opacity: 1,
-            fillOpacity: .8
-        };
-        markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
-    }
-};
+        } else {
+            greenNum += 1;
+            circleMarkerOptions = {
+                weight: 2,
+                fillColor: "green",
+                color: "black",
+                opacity: 1,
+                fillOpacity: .8
+            };
+            markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
+        }
+    };
 
-// 取得座標
-function getRandomLatLng() {
-    return [
-        house[i].LAT, house[i].LNG
-    ];
+    // 取得座標
+    function getRandomLatLng() {
+        return [
+            homeData[i].LAT, homeData[i].LNG
+        ];
+    };
+
+    // 圖例
+    L.Control.Watermark = L.Control.extend({
+        onAdd: function(map) {
+            let layer = L.DomUtil.create('div');
+            layer.innerHTML =
+                '<section class="bg-white rounded p-2" style="opacity:0.95;">' +
+                '<div>全台收容所數 : ' + homeData.length + '</div>' +
+                '<div>綠標(收容所未爆滿) : ' + greenNum + '</div>' +
+                '<div>紅標(收容所已爆滿) : ' + redNum + '</div>' +
+                '</section>';
+            return layer;
+        },
+        onRemove: function(map) {
+            // Nothing to do here
+        }
+    });
+    L.control.watermark = function(opts) {
+        return new L.Control.Watermark(opts);
+    };
+    L.control.watermark({
+        position: 'bottomleft'
+    }).addTo(map);
 };
