@@ -120,3 +120,10 @@ home.onload = () => {
 
 
 };
+
+// 定位
+lc = L.control.locate({
+    strings: {
+        title: "定位"
+    }
+}).addTo(map);
