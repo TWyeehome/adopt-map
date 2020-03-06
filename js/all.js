@@ -18,6 +18,7 @@ let myRenderer = L.canvas({
 let circleMarkerOptions = null;
 let infoStr = '';
 let redNum = 0;
+let orangeNum = 0;
 let greenNum = 0;
 
 // 右上標籤
@@ -74,7 +75,16 @@ home.onload = () => {
                 fillOpacity: .8
             };
             markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
-
+        } else if (homeData[i].cnt > (homeData[i].MaxAmls)*0.5) {
+            orangeNum += 1;
+            circleMarkerOptions = {
+                weight: 2,
+                fillColor: "orange",
+                color: "black",
+                opacity: 1,
+                fillOpacity: .8
+            };
+            markers.push(L.circleMarker(getRandomLatLng(), circleMarkerOptions).addTo(map).bindPopup(infoStr));
         } else {
             greenNum += 1;
             circleMarkerOptions = {
@@ -101,9 +111,10 @@ home.onload = () => {
             let layer = L.DomUtil.create('div');
             layer.innerHTML =
                 '<section class="bg-white rounded p-2" style="opacity:0.95;">' +
-                '<div>全台收容所數 : ' + homeData.length + '</div>' +
-                '<div>綠標(收容所未爆滿) : ' + greenNum + '</div>' +
-                '<div>紅標(收容所已爆滿) : ' + redNum + '</div>' +
+                '<div>收容所總數 : ' + homeData.length + '</div>' +
+                '<div>綠標(空間充足) : ' + greenNum + '</div>' +
+                '<div>橘標(空間不足一半) : ' + orangeNum + '</div>' +
+                '<div>紅標(空間爆滿) : ' + redNum + '</div>' +
                 '</section>';
             return layer;
         },
